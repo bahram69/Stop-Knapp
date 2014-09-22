@@ -83,7 +83,7 @@ START:
 		STA DDRD
 		
 	; Start knapp
-KNAPP:	BRCLR 0 PORTA KNAPP
+KNAPP1:	BRCLR 0 PORTA KNAPP1
 	
 	; Start	
 TÄND:	LDA #1

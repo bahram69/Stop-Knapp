@@ -84,6 +84,9 @@ START:
 		
 	; Start knapp
 KNAPP1:	BRCLR 0 PORTA KNAPP1
+
+	;Vi användet CLC för att undvika 2 bitars problem.
+		CLC
 	
 	; Start	
 TÄND:	LDA #1

@@ -1,0 +1,109 @@
+;************************  FRAME.JL3  **************************
+
+PORTA   EQU     0       ;Port A Data Register
+PORTB   EQU     1       ;Port B Data Register
+PORTD   EQU     3       ;Port D Data Register
+
+DDRA    EQU     4       ;Port A Data Direction Register 
+DDRB    EQU     5       ;Port B Data Direction Register
+DDRD    EQU     7       ;Port D Data Direction Register
+
+PDCR    EQU     $A      ;Port D Control Register
+PTAPUE  EQU     $D      ;Port A Pull-up Enable Register
+
+KBSCR   EQU     $1A     ;Keyboard Status and Control Register
+KBIER   EQU     $1B     ;Keyboard Interrupt Enable Register
+
+INTSCR  EQU     $1D     ;IRQ Status and Control Register
+CONFIG2 EQU     $1E     ;Configuration Register 2
+CONFIG1 EQU     $1F     ;Configuration Register 1
+
+TSC     EQU     $20     ;TIM Status and Control Register
+TCNTH   EQU     $21     ;TIM Counter Register High
+TCNTL   EQU     $22     ;TIM Counter Register Low
+TMODH   EQU     $23     ;TIM Counter Modulo Register High
+TMODL   EQU     $24     ;TIM Counter Modulo Register Low
+TSC0    EQU     $25     ;TIM Channel 0 Status & Control Register
+TCH0H   EQU     $26     ;TIM Channel 0 Register High
+TCH0L   EQU     $27     ;TIM Channel 0 Register Low
+TSC1    EQU     $28     ;TIM Channel 1 Status & Control Register
+TCH1H   EQU     $29     ;TIM Channel 1 Register High
+TCH1L   EQU     $2A     ;TIM Channel 1 Register Low
+                
+ADSCR   EQU     $3C     ;ADC Status and Control Register
+ADR     EQU     $3D     ;ADC Data Register
+ADICLK  EQU     $3E     ;ADC Input Clock Register
+
+BRSR    EQU     $FE00   ;Break Status Register
+RSR     EQU     $FE01   ;Reset Status Register
+BFCR    EQU     $FE03   ;Break Flag Control Register
+INT1    EQU     $FE04   ;Interrupt Status Register 1
+INT2    EQU     $FE05   ;Interrupt Status Register 2
+INT3    EQU     $FE06   ;Interrupt Status Register 3
+
+FLCR    EQU     $FE08   ;Flash Control Register
+FLBPR   EQU     $FE09   ;Flash Block Protect Register
+
+BRKH    EQU     $FE0C   ;Break Address Register High
+BRKL    EQU     $FE0D   ;Break Address Register Low
+BRKSCR  EQU     $FE0E   ;Break Status & Control Register
+
+COPCTL  EQU     $FFFF   ;COP Control Register
+
+ADCVEK  EQU     $FFDE   ;ADC Conversion Complete Vector
+KBDVEK  EQU     $FFE0   ;Keyboard Vector
+TOWVEK  EQU     $FFF2   ;TIM Overflow Vector
+TC1VEK  EQU     $FFF4   ;TIM Channel 1 Vector
+TC0VEK  EQU     $FFF6   ;TIM Channel 0 Vector   
+EXTVEK  EQU     $FFFA   ;External Interrupt Vector
+SWIVEK  EQU     $FFFC   ;Software Interrupt Vector
+RESVEK  EQU     $FFFE   ;Reset Vector
+
+RAM     EQU     $80     ;Minne för variabler
+FPROM   EQU     $EC00   ;Minne för program
+
+        ORG     RESVEK          ;Definiera resetvektorn
+        DW      START           ;START är läget vid programstarten
+
+        ORG     RAM             ;Variabler
+
+
+;Här läggs programmets variabler, deklarerade med DS-satser
+;Hit flyttas också variablerna från biblioteksmodulerna
+
+        ORG     FPROM   
+        
+;Här läggs programmets konstanter och tabeller
+
+START:
+        BSET    0,CONFIG1       ;Stäng av COP
+        
+      ;Skriv programmet här...
+		LDA #$FF
+		STA DDRD
+		
+	; Start knapp
+KNAPP:	BRCLR 0 PORTA KNAPP
+	
+	; Start	
+TÄND:	LDA #1
+		STA PORTD
+	; Vänta	
+HOPP1:	LDA #255
+
+VÄNTA:	DEC A
+		BNE VÄNTA
+	; Rotera vänster	
+HOPP:	ROL PORTD
+		BCC HOPP1
+		
+		CLC
+		
+		JMP TÄND
+		
+	
+;Efter programmet läggs biblioteksmodulerna in.
+;Variabler flyttas till RAM.
+;Konstanter och tabeller flyttas till PAGE0.
+
+        END

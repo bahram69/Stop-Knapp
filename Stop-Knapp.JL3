@@ -79,30 +79,33 @@ START:
         BSET    0,CONFIG1       ;Stäng av COP
         
       ;Skriv programmet här...
+		
 		LDA #$FF
 		STA DDRD
 		
 	; Start knapp
-KNAPP1:	BRCLR 0 PORTA KNAPP1
-
-	;Vi användet CLC för att undvika 2 bitars problem.
+KNAPP1:	BRCLR 0 PORTA KNAPP1		
 		CLC
-	
+
 	; Start	
-TÄND:	LDA #1
+TÄND:	LDA #01
 		STA PORTD
 	; Vänta	
 HOPP1:	LDA #255
 
 VÄNTA:	DEC A
 		BNE VÄNTA
+	; Stopp knabb
+KNAPP2:	BRCLR 0 PORTA KNAPP1
+		CLC
+		
 	; Rotera vänster	
 HOPP:	ROL PORTD
 		BCC HOPP1
 		
 		CLC
 		
-		JMP TÄND
+		JMP KNAPP1
 		
 	
 ;Efter programmet läggs biblioteksmodulerna in.

@@ -80,8 +80,10 @@ START:
         
       ;Skriv programmet här...
 
-	  	LDA #$FF
+IO:	  	LDA #$FF
 		STA DDRD
+		LDA #0
+		STA PORTD
 		
 	; Start knapp
 KNAPP1:	BRCLR 0 PORTA KNAPP1		
@@ -99,7 +101,7 @@ VÄNTA:	DEC A
 		BNE VÄNTA
 		
 	; Stopp knabb
-KNAPP2:	BRCLR 0 PORTA KNAPP1
+KNAPP2:	BRCLR 0 PORTA IO
 		CLC	
 				
 	; Rotera vänster	
@@ -108,7 +110,7 @@ HOPP:	ROL PORTD
 		
 		CLC
 		
-		JMP KNAPP1
+		JMP IO
 		
 	
 ;Efter programmet läggs biblioteksmodulerna in.

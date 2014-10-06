@@ -80,7 +80,7 @@ START:
         
       ;Skriv programmet här...
 
-	  			LDA #$FF
+	  	LDA #$FF
 		STA DDRD
 		
 IO:		LDA #0
@@ -94,36 +94,35 @@ KNAPP1:	BRCLR 0 PORTA KNAPP1
 	; Start	
 TÄND:	LDA #01
 		STA PORTD
-		
-
-		
 					
 	; Vänta	
 HOPP1:	LDA #255
 
+	
 
 VÄNTA:	DEC A
 		BNE VÄNTA
 		
-	; Stopp knabb
-KNAPP2:	BRCLR 0 PORTA IO
-		CLC
-		
 		LDA PORTD   ;Man sparar datan från PORTD till TEMP
 		STA TEMP
 		CLC
-				
+		
+	; Stopp knabb
+KNAPP2:	BRCLR 0 PORTA HÄMTA
+		CLC
+								
 	; Rotera vänster	
 HOPP:	ROL PORTD
 		BCC HOPP1
 		
 		CLC
 		
-		LDA TEMP    ;man hämtar datan från TEMP och lägger det i PORTD
-		STA PORTD
-		CLC
+	    JMP IO
 		
-		JMP IO
+HÄMTA: 	LDA TEMP ; här hämtar man datan som sparades i TEMP och laddar i PORTD
+		STA PORTD
+		
+		JMP HOPP1
 		
 	
 ;Efter programmet läggs biblioteksmodulerna in.

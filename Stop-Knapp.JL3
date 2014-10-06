@@ -66,7 +66,7 @@ FPROM   EQU     $EC00   ;Minne för program
         DW      START           ;START är läget vid programstarten
 
         ORG     RAM             ;Variabler
-
+TEMP DS 1
 
 ;Här läggs programmets variabler, deklarerade med DS-satser
 ;Hit flyttas också variablerna från biblioteksmodulerna
@@ -80,18 +80,23 @@ START:
         
       ;Skriv programmet här...
 
-IO:	  	LDA #$FF
+	  			LDA #$FF
 		STA DDRD
-		LDA #0
+		
+IO:		LDA #0
 		STA PORTD
 		
 	; Start knapp
 KNAPP1:	BRCLR 0 PORTA KNAPP1		
 		CLC
-
+		
+		
 	; Start	
 TÄND:	LDA #01
 		STA PORTD
+		
+
+		
 					
 	; Vänta	
 HOPP1:	LDA #255
@@ -102,12 +107,20 @@ VÄNTA:	DEC A
 		
 	; Stopp knabb
 KNAPP2:	BRCLR 0 PORTA IO
-		CLC	
+		CLC
+		
+		LDA PORTD   ;Man sparar datan från PORTD till TEMP
+		STA TEMP
+		CLC
 				
 	; Rotera vänster	
 HOPP:	ROL PORTD
 		BCC HOPP1
 		
+		CLC
+		
+		LDA TEMP    ;man hämtar datan från TEMP och lägger det i PORTD
+		STA PORTD
 		CLC
 		
 		JMP IO

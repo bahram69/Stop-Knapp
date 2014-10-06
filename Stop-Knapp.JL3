@@ -66,7 +66,7 @@ FPROM   EQU     $EC00   ;Minne för program
         DW      START           ;START är läget vid programstarten
 
         ORG     RAM             ;Variabler
-TEMP DS 1
+TEMP DS 1 ;här skapade jag variabeln TEMP.
 
 ;Här läggs programmets variabler, deklarerade med DS-satser
 ;Hit flyttas också variablerna från biblioteksmodulerna
@@ -79,7 +79,6 @@ START:
         BSET    0,CONFIG1       ;Stäng av COP
         
       ;Skriv programmet här...
-
 	  	LDA #$FF
 		STA DDRD
 		
@@ -108,7 +107,7 @@ VÄNTA:	DEC A
 		CLC
 		
 	; Stopp knabb
-KNAPP2:	BRCLR 0 PORTA HÄMTA
+KNAPP2:	BRCLR 0 PORTA HÄMTA ; här om PORTA (knappen) är på då programmet fortsätter som vanligt, annars hoppar den till HÄMTA
 		CLC
 								
 	; Rotera vänster	
@@ -117,14 +116,19 @@ HOPP:	ROL PORTD
 		
 		CLC
 		
-	    JMP IO
+	    JMP IO ;i vanliga fall om man trycker inte stopp knappen(KNAPP2) så hoppar man tillbacka i början.
 		
-HÄMTA: 	LDA TEMP ; här hämtar man datan som sparades i TEMP och laddar i PORTD
+HÄMTA:	LDA #0				;jag laddar Acc med 0 för att PORTD nullsättas
+		STA PORTD
+	
+KNAPP3:	BRCLR 0 PORTA KNAPP3	;Jag skapade tredje knappen här för att man skal kunna starta programmet med att sen hämta värdet från TEMP	
+		CLC
+		
+		LDA TEMP ; här hämtar man datan som sparades i TEMP och laddar i PORTD
 		STA PORTD
 		
 		JMP HOPP1
-		
-	
+
 ;Efter programmet läggs biblioteksmodulerna in.
 ;Variabler flyttas till RAM.
 ;Konstanter och tabeller flyttas till PAGE0.
